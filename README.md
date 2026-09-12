@@ -1,3 +1,5 @@
+<img width="1254" height="1254" alt="E682D550-F330-4AD4-B5D2-D49C94628765" src="https://github.com/user-attachments/assets/6646794d-f556-4a3f-891f-117e994c8a22" />
+
 # Velo Rides
 
 Velo Rides is a ride-hailing mobile application developed using React Native and Expo. The application allows users to create an account, log in, select a ride type, enter pickup and destination information, review the estimated fare, select a payment method, and track the status of a ride.
@@ -442,6 +444,6 @@ Some features remain demonstration features and would require additional service
 
 **Mutavu Sonia Nyagatare**
 
-Software Engineering Project
+App and web development studio project.
 
 Velo Rides
