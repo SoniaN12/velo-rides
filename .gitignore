@@ -1,0 +1,15 @@
+node_modules/
+.expo/
+.DS_Store
+
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+velo-backend/node_modules/
+atlas-credentials.env
+
+.idea/
