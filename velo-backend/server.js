@@ -6,9 +6,11 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const paymentRoutes = require("./routes/payments");
+const rideRoutes = require("./routes/rides");
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -23,17 +25,19 @@ app.get("/", (req, res) => {
   });
 });
 
-// Routes
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/rides", rideRoutes);
 
-// Connect to MongoDB
+// Port
+const PORT = process.env.PORT || 5000;
+
+// Connect to MongoDB and start server
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected successfully");
-
-    const PORT = process.env.PORT || 5000;
 
     app.listen(PORT, () => {
       console.log(`Velo backend running on port ${PORT}`);
