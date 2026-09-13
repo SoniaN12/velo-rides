@@ -1,30 +1,45 @@
-<img width="1254" height="1254" alt="E682D550-F330-4AD4-B5D2-D49C94628765" src="https://github.com/user-attachments/assets/6646794d-f556-4a3f-891f-117e994c8a22" />
+# 🏍️ Velo Rides
 
-# Velo Rides
+**Velo Rides** is a mobile ride-hailing application designed to make motorcycle and car transportation simple, fast, and accessible.
 
-Velo Rides is a ride-hailing mobile application developed using React Native and Expo. The application allows users to create an account, log in, select a ride type, enter pickup and destination information, review the estimated fare, select a payment method, and track the status of a ride.
+The application was developed using **React Native with Expo** for the mobile frontend and **Node.js, Express, and MongoDB Atlas** for the backend. It includes user authentication, ride booking, payment selection, ride tracking, and ride history.
 
-The project contains both a frontend mobile application and a backend API.
+---
 
-## Main Features
+## 📱 About the Project
+
+Velo Rides allows users to create an account, securely log in, enter their pickup location and destination, select a ride type, choose a payment method, and confirm their ride.
+
+The application connects to a backend API that manages users and rides. MongoDB Atlas is used to store application data.
+
+The project currently supports **Moto** and **Car** ride options and includes a simulated Mobile Money payment system for development and testing.
+
+---
+
+## ✨ Main Features
 
 - User registration
-- User login
-- Secure password hashing
-- MongoDB user database
-- Moto and car ride selection
-- Pickup and destination entry
-- Ride fare estimation
+- Secure user login
+- Persistent login sessions
+- Password hashing
+- JWT authentication
+- Pickup and destination selection
+- Moto and Car ride options
+- Ride fare information
 - Ride confirmation
-- Ride history
-- User profile
-- Wallet page
 - Cash payment option
-- Mobile Money sandbox/demo payment
-- Ride status screen
-- Dark purple and gold user interface
+- Mobile Money payment simulation
+- Ride status tracking
+- Ride history
+- User-specific ride records
+- Wallet screen
+- User profile
+- Bottom navigation
+- Dark purple and gold interface
 
-## Technologies Used
+---
+
+## 🛠️ Technologies Used
 
 ### Frontend
 
@@ -32,7 +47,8 @@ The project contains both a frontend mobile application and a backend API.
 - Expo
 - Expo Router
 - TypeScript
-- Ionicons
+- AsyncStorage
+- Expo Vector Icons
 
 ### Backend
 
@@ -45,14 +61,15 @@ The project contains both a frontend mobile application and a backend API.
 - CORS
 - dotenv
 
-## Project Structure
+---
+
+## 📂 Project Structure
 
 ```text
 velo-app/
 │
 ├── src/
 │   ├── app/
-│   │   ├── _layout.tsx
 │   │   ├── index.tsx
 │   │   ├── login.tsx
 │   │   ├── signup.tsx
@@ -62,388 +79,254 @@ velo-app/
 │   │   ├── profile.tsx
 │   │   ├── ride-confirmation.tsx
 │   │   ├── payment.tsx
-│   │   └── ride-status.tsx
+│   │   ├── ride-status.tsx
+│   │   └── _layout.tsx
 │   │
-│   └── components/
-│       └── BottomNav.tsx
-│
-├── assets/
+│   ├── components/
+│   │   └── BottomNav.tsx
+│   │
+│   └── utils/
+│       └── authStorage.ts
 │
 ├── velo-backend/
 │   ├── server.js
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── .env.example
-│   │
 │   ├── models/
-│   │   └── User.js
+│   │   ├── User.js
+│   │   └── Ride.js
 │   │
 │   ├── routes/
 │   │   ├── auth.js
+│   │   ├── rides.js
 │   │   └── payments.js
 │   │
 │   └── middleware/
+│       └── auth.js
 │
 ├── package.json
-├── app.json
-├── tsconfig.json
 └── README.md
 ```
 
-## Application Flow
+---
+
+## 🔐 User Authentication
+
+Velo Rides uses secure authentication to identify users.
+
+When a new user registers, their password is hashed using **bcryptjs** before being stored in MongoDB.
+
+When the user logs in, the backend checks the entered password against the hashed password stored in the database.
+
+After successful authentication, the backend creates a **JSON Web Token (JWT)**.
+
+The mobile application stores the login session locally so that the user does not need to sign in again every time they book a ride.
+
+Protected API requests use the token in the following format:
+
+```text
+Authorization: Bearer <token>
+```
+
+This also allows rides to be associated with the correct user account.
+
+---
+
+## 🚕 Ride Booking Process
 
 The main application flow is:
 
 ```text
-Welcome
-   ↓
-Login / Sign Up
-   ↓
-Home
-   ↓
-Enter Pickup & Destination
-   ↓
+Create Account / Login
+          ↓
+        Home
+          ↓
+Enter Pickup Location
+          ↓
+Enter Destination
+          ↓
 Choose Moto or Car
-   ↓
-Ride Confirmation
-   ↓
+          ↓
+ Ride Confirmation
+          ↓
 Choose Payment Method
-   ↓
-Payment / Cash
-   ↓
-Find Driver
-   ↓
-Ride Status
+          ↓
+   Confirm Ride
+          ↓
+    Ride Status
+          ↓
+    Ride History
 ```
 
-The bottom navigation also allows the user to access:
-
-```text
-Home | Rides | Wallet | Profile
-```
+Users can later view their previous rides from the **Rides** section.
 
 ---
 
-# Installation
+## 💳 Payment
 
-## 1. Clone the Repository
+Velo currently provides two payment options:
 
-```bash
-git clone https://github.com/SoniaN12/velo-rides.git
-```
+### Cash
 
-Enter the project:
+The user can choose to pay the driver using cash.
 
-```bash
-cd velo-rides
-```
+### Mobile Money
 
----
+The application also contains a **Mobile Money payment simulation** for development and demonstration purposes.
 
-# Frontend Setup
+The current implementation does not process real Mobile Money transactions.
 
-## 2. Install Frontend Dependencies
-
-From the main project directory:
-
-```bash
-npm install
-```
-
-## 3. Start the Expo Application
-
-Run:
-
-```bash
-npx expo start
-```
-
-The Expo development server will start.
-
-For the web version, press:
-
-```text
-w
-```
-
-The application can also be tested using Expo Go on a compatible mobile device.
+A future version of Velo can integrate the official **MTN MoMo API** to support real payments.
 
 ---
 
-# Backend Setup
+## 🗄️ Database
 
-Open another terminal and enter the backend directory:
+The application uses **MongoDB Atlas** as its cloud database.
 
-```bash
-cd velo-backend
-```
+MongoDB stores information such as:
 
-Install the backend dependencies:
+- User accounts
+- Hashed passwords
+- User email addresses
+- Ride information
+- Pickup locations
+- Destinations
+- Ride types
+- Fares
+- Payment methods
+- Payment status
+- Ride status
 
-```bash
-npm install
-```
-
-The backend uses Express.js and MongoDB Atlas.
+Each authenticated ride is connected to the user who created it.
 
 ---
 
-# Environment Variables
+## 🔒 Security
 
-For security reasons, the real `.env` file is not included in this repository.
+Several security measures are included in the application:
 
-Create a new `.env` file inside:
+- Password hashing using bcryptjs
+- JWT-based authentication
+- Protected backend routes
+- User-specific ride information
+- Environment variables for sensitive information
+- Persistent authenticated sessions
+- MongoDB credentials kept outside the application source code
 
-```text
-velo-backend/
-```
+Sensitive information such as MongoDB credentials and JWT secrets should never be uploaded to GitHub.
 
-You can use `.env.example` as a template.
+---
+
+## ⚙️ Environment Variables
+
+The backend requires a `.env` file.
 
 Example:
 
 ```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
 PORT=5000
-MONGO_URI=YOUR_MONGODB_ATLAS_CONNECTION_STRING
-JWT_SECRET=YOUR_JWT_SECRET
 ```
 
-Replace:
-
-```text
-YOUR_MONGODB_ATLAS_CONNECTION_STRING
-```
-
-with a valid MongoDB Atlas connection string.
-
-Replace:
-
-```text
-YOUR_JWT_SECRET
-```
-
-with a private random secret used to sign authentication tokens.
-
-Never commit the real `.env` file to GitHub.
+The real `.env` file should be included in `.gitignore` and should **never be committed to GitHub**.
 
 ---
 
-# Starting the Backend
+## ▶️ Running the Backend
 
-From the `velo-backend` directory, run:
-
-```bash
-node server.js
-```
-
-When MongoDB connects successfully, the terminal should display:
-
-```text
-MongoDB connected successfully
-Velo backend running on port 5000
-```
-
-The API will then be available locally at:
-
-```text
-http://localhost:5000
-```
-
-Opening this address should return a response similar to:
-
-```json
-{
-  "message": "Velo API is running",
-  "database": "connected"
-}
-```
-
----
-
-# MongoDB Database
-
-Velo uses MongoDB Atlas to store registered users.
-
-The user model stores information such as:
-
-- Name
-- Email
-- Phone number
-- Hashed password
-- Wallet balance
-- Account creation date
-
-Passwords are not stored as plain text. The backend hashes passwords using `bcryptjs` before storing them in MongoDB.
-
----
-
-# Authentication
-
-The backend provides registration and login endpoints.
-
-## Register User
-
-```text
-POST /api/auth/register
-```
-
-Example request:
-
-```json
-{
-  "name": "Test User",
-  "phone": "+250780000001",
-  "email": "test@velo.com",
-  "password": "Test1234"
-}
-```
-
-## Login
-
-```text
-POST /api/auth/login
-```
-
-Example:
-
-```json
-{
-  "email": "test@velo.com",
-  "password": "Test1234"
-}
-```
-
-When the login information is correct, the backend generates a JSON Web Token (JWT).
-
----
-
-# Payment System
-
-Velo currently supports:
-
-### Cash
-
-The passenger can select cash and continue directly to the ride-search process.
-
-### Mobile Money
-
-The project contains a sandbox/demo Mobile Money payment endpoint.
-
-```text
-POST /api/payments/momo/request
-```
-
-This allows the payment workflow to be demonstrated without charging a real Mobile Money account.
-
-The current implementation is intended for development and demonstration purposes and does not process real financial transactions.
-
-A production version could later integrate an official Mobile Money provider API.
-
----
-
-# Testing the Backend
-
-After starting the backend, test it using:
-
-```bash
-curl http://localhost:5000
-```
-
-A successful response should show:
-
-```json
-{
-  "message": "Velo API is running",
-  "database": "connected"
-}
-```
-
-A registration request can be tested using:
-
-```bash
-curl -X POST http://localhost:5000/api/auth/register \
--H "Content-Type: application/json" \
--d '{
-  "name":"Test User",
-  "phone":"+250780000001",
-  "email":"test@velo.com",
-  "password":"Test1234"
-}'
-```
-
-A successful registration confirms that the Express API can communicate with MongoDB.
-
----
-
-# Running Frontend and Backend Together
-
-The project requires two terminal windows.
-
-### Terminal 1 — Backend
+Navigate to the backend directory:
 
 ```bash
 cd velo-backend
-node server.js
 ```
 
-### Terminal 2 — Frontend
-
-From the project root:
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Start the backend:
+
+```bash
+node server.js
+```
+
+When everything is working correctly, the server should connect to MongoDB and run on port `5000`.
+
+---
+
+## 📲 Running the Velo Mobile App
+
+From the main Velo project directory, install the dependencies:
+
+```bash
+npm install
+```
+
+Start Expo:
+
+```bash
 npx expo start
 ```
 
-For browser testing, press:
+Open **Expo Go** on an Android device and scan the QR code displayed in the terminal.
 
-```text
-w
-```
-
-When testing through the browser on the same computer, the frontend can communicate with:
-
-```text
-http://localhost:5000
-```
-
-When testing on a physical phone with Expo Go, `localhost` refers to the phone itself. Therefore, the frontend should instead use the development computer's local network IP address, and both devices should be connected to the same network.
+For local development, the Android phone and development computer should be connected to the same network so that the mobile application can communicate with the backend.
 
 ---
 
-# Security
+## 🎨 User Interface
 
-The project uses several basic security practices:
+Velo uses a consistent **dark purple and gold** design.
 
-- Passwords are hashed before database storage.
-- Authentication uses JSON Web Tokens.
-- Database credentials are stored in environment variables.
-- `.env` is excluded from Git.
-- MongoDB credentials are not stored in frontend source code.
-- Payment credentials should only be stored on the backend.
-- The Mobile Money implementation currently uses sandbox/demo transactions rather than real financial transactions.
+The interface includes:
+
+- Dark purple backgrounds
+- Gold buttons and highlights
+- Simple navigation
+- Ride selection cards
+- Payment options
+- Ride status information
+- Profile and wallet screens
+
+The design is intended to provide a simple and modern mobile experience.
 
 ---
 
-# Current Project Status
+## 🚀 Future Improvements
 
-The current version demonstrates the main Velo ride-booking workflow, including authentication, MongoDB integration, ride selection, ride confirmation, payment selection, and ride status.
+The application can be expanded with:
 
-Some features remain demonstration features and would require additional services for a production deployment, including:
-
-- Real-time GPS tracking
-- Driver location services
-- Driver/passenger matching
-- Production Mobile Money processing
+- Official MTN MoMo integration
+- Live GPS location
+- Google Maps or another mapping service
+- Automatic pickup detection
+- Distance-based fare calculation
+- Driver registration and authentication
+- Automatic driver matching
+- Real-time driver location
+- Real-time ride tracking
 - Push notifications
-- Production authentication/session management
+- Ride cancellation
+- Driver and passenger ratings
+- Reviews
+- Emergency/SOS features
+- Production backend deployment
+- iOS support and further Android optimization
 
 ---
 
-# Author
+## 🎯 Project Goal
+
+The goal of Velo Rides is to demonstrate how modern mobile and backend technologies can be combined to create a practical ride-hailing platform.
+
+The project focuses on secure authentication, database integration, ride management, payment selection, and a simple mobile user experience.
+
+---
+
+## 👩‍💻 Author
 
 **Mutavu Sonia Nyagatare**
 
-App and web development studio project.
-
-Velo Rides
+Software Engineering Project
