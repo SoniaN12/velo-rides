@@ -9,17 +9,24 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
+
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { saveLogin, getToken } from "../utils/authStorage";
+
+const API_URL = "http://192.168.0.108:5000";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] =
+    useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    console.log("=== VELO LOGIN BUTTON PRESSED ===");
     if (!email.trim() || !password.trim()) {
       Alert.alert(
         "Missing Details",
@@ -31,8 +38,10 @@ export default function LoginScreen() {
     try {
       setLoading(true);
 
+      console.log("Sending login request to backend...");
+
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           method: "POST",
           headers: {
@@ -55,22 +64,53 @@ export default function LoginScreen() {
         return;
       }
 
-      // Store login information for the web version.
-      if (Platform.OS === "web" && typeof window !== "undefined") {
-        localStorage.setItem("veloToken", data.token);
-        localStorage.setItem(
-          "veloUser",
-          JSON.stringify(data.user)
+      if (!data.token) {
+        Alert.alert(
+          "Login Error",
+          "The server did not return a login token."
         );
+        return;
       }
 
+      // SAVE SESSION ON ANDROID / IOS / WEB
+      console.log("Backend login successful, saving token...");
+      
+      await saveLogin(
+        data.token,
+        data.user
+      );
+
+      const savedToken = await getToken();
+
+      console.log(
+        "VELO LOGIN SAVED SUCCESSFULLY"
+      );
+
+      console.log(
+        "TOKEN AVAILABLE AFTER LOGIN:",
+        Boolean(savedToken)
+      );
+
+      if (!savedToken) {
+        Alert.alert(
+          "Session Storage Error",
+          "Login succeeded but the session could not be saved on this device."
+        );
+        return;
+      }
+
+      console.log("LOGIN COMPLETE - GOING TO HOME");
       router.replace("/home");
+
     } catch (error) {
-      console.error("Login error:", error);
+      console.error(
+        "Login error:",
+        error
+      );
 
       Alert.alert(
         "Connection Error",
-        "Could not connect to the Velo server. Make sure the backend is running."
+        "Could not connect to the Velo server."
       );
     } finally {
       setLoading(false);
@@ -80,23 +120,16 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={
+        Platform.OS === "ios"
+          ? "padding"
+          : undefined
+      }
     >
       <ScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color="#E5C35A"
-          />
-        </TouchableOpacity>
-
         <View style={styles.logoCircle}>
           <Ionicons
             name="navigate"
@@ -105,15 +138,21 @@ export default function LoginScreen() {
           />
         </View>
 
-        <Text style={styles.logo}>VELO</Text>
-
-        <Text style={styles.title}>Welcome Back</Text>
-
-        <Text style={styles.subtitle}>
-          Sign in to continue booking your rides.
+        <Text style={styles.logo}>
+          VELO
         </Text>
 
-        <Text style={styles.label}>Email</Text>
+        <Text style={styles.title}>
+          Welcome Back
+        </Text>
+
+        <Text style={styles.subtitle}>
+          Sign in to continue with Velo
+        </Text>
+
+        <Text style={styles.label}>
+          Email
+        </Text>
 
         <View style={styles.inputContainer}>
           <Ionicons
@@ -133,7 +172,9 @@ export default function LoginScreen() {
           />
         </View>
 
-        <Text style={styles.label}>Password</Text>
+        <Text style={styles.label}>
+          Password
+        </Text>
 
         <View style={styles.inputContainer}>
           <Ionicons
@@ -152,10 +193,16 @@ export default function LoginScreen() {
           />
 
           <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
+            onPress={() =>
+              setShowPassword(!showPassword)
+            }
           >
             <Ionicons
-              name={showPassword ? "eye-off-outline" : "eye-outline"}
+              name={
+                showPassword
+                  ? "eye-off-outline"
+                  : "eye-outline"
+              }
               size={21}
               color="#D6A51D"
             />
@@ -163,16 +210,21 @@ export default function LoginScreen() {
         </View>
 
         <TouchableOpacity
-          style={[
-            styles.loginButton,
-            loading && styles.disabledButton,
-          ]}
+          style={styles.loginButton}
           onPress={handleLogin}
           disabled={loading}
         >
-          <Text style={styles.loginButtonText}>
-            {loading ? "Signing In..." : "Sign In"}
-          </Text>
+          {loading ? (
+            <ActivityIndicator
+              color="#140821"
+            />
+          ) : (
+            <Text
+              style={styles.loginButtonText}
+            >
+              Sign In
+            </Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.signupRow}>
@@ -181,7 +233,9 @@ export default function LoginScreen() {
           </Text>
 
           <TouchableOpacity
-            onPress={() => router.push("/signup")}
+            onPress={() =>
+              router.push("/signup")
+            }
           >
             <Text style={styles.signupLink}>
               Create Account
@@ -203,13 +257,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 24,
     justifyContent: "center",
-  },
-
-  backButton: {
-    position: "absolute",
-    top: 25,
-    left: 22,
-    padding: 8,
   },
 
   logoCircle: {
@@ -271,8 +318,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 12,
     fontSize: 16,
-    outlineStyle: "none",
-  } as any,
+  },
 
   loginButton: {
     backgroundColor: "#C69214",
@@ -280,10 +326,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     alignItems: "center",
     marginTop: 12,
-  },
-
-  disabledButton: {
-    opacity: 0.6,
   },
 
   loginButtonText: {

@@ -5,62 +5,66 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// REGISTER
+/* =========================
+   REGISTER
+========================= */
 router.post("/register", async (req, res) => {
   try {
-    const { name, phone, email, password } = req.body;
+    let { name, email, password } = req.body;
 
-    if (!name || !phone || !email || !password) {
+    if (!name || !email || !password) {
       return res.status(400).json({
-        message: "Please complete all fields.",
+        message: "Name, email and password are required.",
       });
     }
 
-    const existingUser = await User.findOne({
-      $or: [
-        { email: email.toLowerCase() },
-        { phone: phone },
-      ],
-    });
+    email = email.trim().toLowerCase();
+
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
-        message:
-          "An account with this email or phone number already exists.",
+        message: "An account with this email already exists.",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      name,
-      phone,
-      email: email.toLowerCase(),
+    const user = new User({
+      name: name.trim(),
+      email,
       password: hashedPassword,
     });
 
+    await user.save();
+
+    console.log("New Velo user registered:", email);
+
     return res.status(201).json({
-      message: "Account created successfully.",
+      message: "User registered successfully.",
       user: {
         id: user._id,
         name: user.name,
-        phone: user.phone,
         email: user.email,
       },
     });
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("REGISTER ERROR:", error);
 
     return res.status(500).json({
-      message: "Server error.",
+      message: "Registration failed.",
     });
   }
 });
 
-// LOGIN
+/* =========================
+   LOGIN
+========================= */
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    console.log("Login request received");
 
     if (!email || !password) {
       return res.status(400).json({
@@ -68,11 +72,13 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const user = await User.findOne({
-      email: email.toLowerCase(),
-    });
+    email = email.trim().toLowerCase();
+
+    const user = await User.findOne({ email });
 
     if (!user) {
+      console.log("Login failed: user not found:", email);
+
       return res.status(401).json({
         message: "Invalid email or password.",
       });
@@ -84,14 +90,24 @@ router.post("/login", async (req, res) => {
     );
 
     if (!passwordMatches) {
+      console.log("Login failed: incorrect password");
+
       return res.status(401).json({
         message: "Invalid email or password.",
       });
     }
 
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is missing");
+
+      return res.status(500).json({
+        message: "Server authentication configuration error.",
+      });
+    }
+
     const token = jwt.sign(
       {
-        userId: user._id,
+        userId: user._id.toString(),
       },
       process.env.JWT_SECRET,
       {
@@ -99,22 +115,22 @@ router.post("/login", async (req, res) => {
       }
     );
 
+    console.log("Login successful:", email);
+
     return res.status(200).json({
       message: "Login successful.",
       token,
       user: {
         id: user._id,
         name: user.name,
-        phone: user.phone,
         email: user.email,
-        walletBalance: user.walletBalance,
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("LOGIN ERROR:", error);
 
     return res.status(500).json({
-      message: "Server error.",
+      message: "Login failed.",
     });
   }
 });
