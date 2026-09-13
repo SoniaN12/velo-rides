@@ -11,12 +11,11 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import { API_URL } from "../utils/api";
 
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { saveLogin, getToken } from "../utils/authStorage";
-
-const API_URL = "http://192.168.0.108:5000";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");

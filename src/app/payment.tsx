@@ -8,11 +8,10 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
+import { API_URL } from "../utils/api";
 import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { getToken } from "../utils/authStorage";
-
-const API_URL = "http://192.168.0.108:5000";
 
 console.log("VELO PAYMENT VERSION SEPTEMBER 12");
 

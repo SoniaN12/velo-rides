@@ -13,6 +13,7 @@ import {
   Alert,
   RefreshControl,
 } from "react-native";
+import { API_URL } from "../utils/api";
 
 import {
   router,
@@ -26,9 +27,6 @@ import BottomNav from "../components/BottomNav";
 import {
   getToken,
 } from "../utils/authStorage";
-
-const API_URL =
-  "http://192.168.0.108:5000";
 
 type Ride = {
   _id: string;

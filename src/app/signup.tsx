@@ -1,216 +1,380 @@
 import React, { useState } from "react";
-
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Alert,
+  ActivityIndicator,
+  ScrollView,
 } from "react-native";
-
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { API_URL } from "../utils/api";
 import { router } from "expo-router";
 
-export default function SignupScreen() {
+export default function Signup() {
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const signup = () => {
+  const handleSignup = async () => {
+    console.log("SIGNUP BUTTON PRESSED");
+
     if (
       !name.trim() ||
-      !phone.trim() ||
       !email.trim() ||
-      !password.trim()
+      !password ||
+      !confirmPassword
     ) {
-      Alert.alert(
-        "Missing information",
-        "Please complete all fields."
-      );
+      console.log("SIGNUP STOPPED: missing fields");
+
+      if (typeof window !== "undefined") {
+        window.alert("Please complete all fields.");
+      } else {
+        Alert.alert(
+          "Missing Information",
+          "Please complete all fields."
+        );
+      }
 
       return;
     }
 
-    Alert.alert(
-      "Account Created",
-      "Your demo Velo account was created successfully.",
-      [
+    if (password.length < 6) {
+      console.log("SIGNUP STOPPED: password too short");
+
+      if (typeof window !== "undefined") {
+        window.alert(
+          "Password must contain at least 6 characters."
+        );
+      } else {
+        Alert.alert(
+          "Weak Password",
+          "Password must contain at least 6 characters."
+        );
+      }
+
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      console.log("SIGNUP STOPPED: passwords do not match");
+
+      if (typeof window !== "undefined") {
+        window.alert("Passwords do not match.");
+      } else {
+        Alert.alert(
+          "Password Error",
+          "Passwords do not match."
+        );
+      }
+
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      console.log("SIGNUP REQUEST STARTING");
+      console.log("API URL:", API_URL);
+      console.log(
+        "REGISTER URL:",
+        `${API_URL}/api/auth/register`
+      );
+
+      const response = await fetch(
+        `${API_URL}/api/auth/register`,
         {
-          text: "Continue",
-          onPress: () =>
-            router.replace("/home"),
-        },
-      ]
-    );
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            password,
+          }),
+        }
+      );
+
+      console.log(
+        "SIGNUP HTTP STATUS:",
+        response.status
+      );
+
+      const data = await response.json();
+
+      console.log(
+        "SIGNUP RESPONSE DATA:",
+        data
+      );
+
+      if (!response.ok) {
+        const message =
+          data.message ||
+          "Unable to create account.";
+
+        console.log(
+          "SIGNUP FAILED:",
+          message
+        );
+
+        if (typeof window !== "undefined") {
+          window.alert(message);
+        } else {
+          Alert.alert(
+            "Registration Failed",
+            message
+          );
+        }
+
+        return;
+      }
+
+      console.log(
+        "SIGNUP SUCCESSFUL"
+      );
+
+      if (typeof window !== "undefined") {
+        window.alert(
+          "Account created successfully. Please sign in."
+        );
+
+        router.replace("/login");
+      } else {
+        Alert.alert(
+          "Account Created",
+          "Your Velo account was created successfully. Please sign in.",
+          [
+            {
+              text: "Continue",
+              onPress: () =>
+                router.replace("/login"),
+            },
+          ]
+        );
+      }
+    } catch (error) {
+      console.error(
+        "SIGNUP FETCH ERROR:",
+        error
+      );
+
+      if (typeof window !== "undefined") {
+        window.alert(
+          "Could not connect to the Velo server."
+        );
+      } else {
+        Alert.alert(
+          "Connection Error",
+          "Could not connect to the Velo server."
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <TouchableOpacity
-          style={styles.back}
-          onPress={() =>
-            router.back()
-          }
-        >
-          <Ionicons
-            name="arrow-back"
-            size={20}
-            color="#D6A51D"
-          />
+    <ScrollView
+      style={styles.page}
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={styles.logoCircle}>
+        <Text style={styles.logo}>V</Text>
+      </View>
 
-          <Text style={styles.backText}>
-            Back
-          </Text>
-        </TouchableOpacity>
+      <Text style={styles.title}>
+        Create Account
+      </Text>
 
-        <Text style={styles.title}>
-          Create Account
-        </Text>
+      <Text style={styles.subtitle}>
+        Join Velo and start booking your rides.
+      </Text>
 
-        <Text style={styles.subtitle}>
-          Join Velo and start your journey.
-        </Text>
-
-        <Field
-          label="FULL NAME"
-          value={name}
-          setValue={setName}
-          placeholder="Your name"
-        />
-
-        <Field
-          label="PHONE NUMBER"
-          value={phone}
-          setValue={setPhone}
-          placeholder="+250..."
-        />
-
-        <Field
-          label="EMAIL"
-          value={email}
-          setValue={setEmail}
-          placeholder="you@example.com"
-        />
-
-        <Text style={styles.label}>
-          PASSWORD
-        </Text>
-
-        <TextInput
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Create password"
-          placeholderTextColor="#9F8545"
-          secureTextEntry
-        />
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={signup}
-        >
-          <Text style={styles.buttonText}>
-            Create Account
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-function Field({
-  label,
-  value,
-  setValue,
-  placeholder,
-}: any) {
-  return (
-    <>
       <Text style={styles.label}>
-        {label}
+        Full Name
       </Text>
 
       <TextInput
         style={styles.input}
-        value={value}
-        onChangeText={setValue}
-        placeholder={placeholder}
-        placeholderTextColor="#9F8545"
+        placeholder="Enter your full name"
+        placeholderTextColor="#B99B49"
+        value={name}
+        onChangeText={setName}
+        autoCapitalize="words"
       />
-    </>
+
+      <Text style={styles.label}>
+        Email
+      </Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Enter your email"
+        placeholderTextColor="#B99B49"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+
+      <Text style={styles.label}>
+        Password
+      </Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Create a password"
+        placeholderTextColor="#B99B49"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+
+      <Text style={styles.label}>
+        Confirm Password
+      </Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm your password"
+        placeholderTextColor="#B99B49"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+
+      <TouchableOpacity
+        style={[
+          styles.button,
+          loading && styles.disabledButton,
+        ]}
+        onPress={handleSignup}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator
+            color="#140821"
+          />
+        ) : (
+          <Text style={styles.buttonText}>
+            Create Account
+          </Text>
+        )}
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() =>
+          router.replace("/login")
+        }
+      >
+        <Text style={styles.loginText}>
+          Already have an account?{" "}
+          <Text style={styles.loginHighlight}>
+            Sign In
+          </Text>
+        </Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  page: {
     flex: 1,
     backgroundColor: "#140821",
   },
 
-  content: {
-    padding: 25,
-    paddingBottom: 50,
+  container: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    paddingVertical: 40,
   },
 
-  back: {
-    flexDirection: "row",
+  logoCircle: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: "#D6A51D",
     alignItems: "center",
-    gap: 7,
-    marginBottom: 30,
+    justifyContent: "center",
+    alignSelf: "center",
+    marginBottom: 22,
   },
 
-  backText: {
-    color: "#D6A51D",
-    fontWeight: "800",
+  logo: {
+    color: "#140821",
+    fontSize: 34,
+    fontWeight: "900",
   },
 
   title: {
     color: "#E5C35A",
-    fontSize: 32,
-    fontWeight: "900",
+    fontSize: 30,
+    fontWeight: "800",
+    textAlign: "center",
+    marginBottom: 8,
   },
 
   subtitle: {
     color: "#B99B49",
-    marginTop: 7,
+    fontSize: 15,
+    textAlign: "center",
     marginBottom: 30,
   },
 
   label: {
-    color: "#C69214",
-    fontSize: 11,
-    fontWeight: "900",
-    letterSpacing: 1,
+    color: "#E5C35A",
+    fontSize: 14,
+    fontWeight: "600",
     marginBottom: 7,
   },
 
   input: {
     backgroundColor: "#321653",
-    color: "#E5C35A",
     borderWidth: 1,
     borderColor: "#4B236B",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 20,
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 14,
+    color: "#E5C35A",
     fontSize: 16,
+    marginBottom: 17,
   },
 
   button: {
-    backgroundColor: "#C69214",
-    borderRadius: 15,
-    padding: 18,
+    backgroundColor: "#D6A51D",
+    borderRadius: 12,
+    paddingVertical: 16,
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 8,
+  },
+
+  disabledButton: {
+    opacity: 0.7,
   },
 
   buttonText: {
     color: "#140821",
     fontSize: 17,
-    fontWeight: "900",
+    fontWeight: "800",
+  },
+
+  loginText: {
+    color: "#B99B49",
+    textAlign: "center",
+    marginTop: 24,
+    fontSize: 15,
+  },
+
+  loginHighlight: {
+    color: "#E5C35A",
+    fontWeight: "700",
   },
 });
