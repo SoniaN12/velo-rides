@@ -246,7 +246,7 @@ npm install
 Start Expo:
 
 ```bash
-npx expo start
+npm start
 ```
 
 Open **Expo Go** on an Android device and scan the QR code displayed in the terminal.
