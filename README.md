@@ -1,6 +1,6 @@
 <img width="819" height="817" alt="IMG_0117" src="https://github.com/user-attachments/assets/06e09a6b-ef3d-456e-830d-a5841d02355e" />
 
-# 🏍️ Velo Rides
+#  Velo Rides
 
 **Velo Rides** is a mobile ride-hailing application designed to make motorcycle and car transportation simple, fast, and accessible.
 
@@ -8,7 +8,7 @@ The application was developed using **React Native with Expo** for the mobile fr
 
 ---
 
-## 📱 About the Project
+## About the Project
 
 Velo Rides allows users to create an account, securely log in, enter their pickup location and destination, select a ride type, choose a payment method, and confirm their ride.
 
@@ -18,7 +18,7 @@ The project currently supports **Moto** and **Car** ride options and includes a 
 
 ---
 
-## ✨ Main Features
+## Main Features
 
 - User registration
 - Secure user login
@@ -41,7 +41,7 @@ The project currently supports **Moto** and **Car** ride options and includes a 
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 ### Frontend
 
@@ -51,6 +51,7 @@ The project currently supports **Moto** and **Car** ride options and includes a 
 - TypeScript
 - AsyncStorage
 - Expo Vector Icons
+- Render
 
 ### Backend
 
@@ -65,7 +66,7 @@ The project currently supports **Moto** and **Car** ride options and includes a 
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 velo-app/
@@ -110,7 +111,7 @@ velo-app/
 
 ---
 
-## 🔐 User Authentication
+## User Authentication
 
 Velo Rides uses secure authentication to identify users.
 
@@ -132,7 +133,7 @@ This also allows rides to be associated with the correct user account.
 
 ---
 
-## 🚕 Ride Booking Process
+##  Ride Booking Process
 
 The main application flow is:
 
@@ -162,7 +163,7 @@ Users can later view their previous rides from the **Rides** section.
 
 ---
 
-## 💳 Payment
+## Payment
 
 Velo currently provides two payment options:
 
@@ -180,7 +181,7 @@ A future version of Velo can integrate the official **MTN MoMo API** to support 
 
 ---
 
-## 🗄️ Database
+##  Database
 
 The application uses **MongoDB Atlas** as its cloud database.
 
@@ -202,7 +203,7 @@ Each authenticated ride is connected to the user who created it.
 
 ---
 
-## 🔒 Security
+##  Security
 
 Several security measures are included in the application:
 
@@ -218,7 +219,7 @@ Sensitive information such as MongoDB credentials and JWT secrets should never b
 
 ---
 
-## ⚙️ Environment Variables
+##  Environment Variables
 
 The backend requires a `.env` file.
 
@@ -235,7 +236,7 @@ The real `.env` file should be included in `.gitignore` and should **never be co
 ---
 
 
-## 📲 Running the Velo Mobile App
+## Running the Velo Mobile App
 
 From the main Velo project directory, install the dependencies:
 
@@ -255,7 +256,7 @@ For local development, the Android phone and development computer should be conn
 
 ---
 
-## 🎨 User Interface
+## User Interface
 
 Velo uses a consistent **dark purple and gold** design.
 
@@ -273,7 +274,7 @@ The design is intended to provide a simple and modern mobile experience.
 
 ---
 
-## 🚀 Future Improvements
+##  Future Improvements
 
 The application can be expanded with:
 
@@ -296,7 +297,7 @@ The application can be expanded with:
 
 ---
 
-## 🎯 Project Goal
+##  Project Goal
 
 The goal of Velo Rides is to demonstrate how modern mobile and backend technologies can be combined to create a practical ride-hailing platform.
 
@@ -304,8 +305,8 @@ The project focuses on secure authentication, database integration, ride managem
 
 ---
 
-## 👩‍💻 Author
+## Author
 
 **Mutavu Sonia Nyagatare**
 
-Software Engineering Project
+App and Web development studio project.
