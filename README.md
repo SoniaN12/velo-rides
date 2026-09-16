@@ -1,3 +1,5 @@
+<img width="819" height="817" alt="IMG_0117" src="https://github.com/user-attachments/assets/06e09a6b-ef3d-456e-830d-a5841d02355e" />
+
 # 🏍️ Velo Rides
 
 **Velo Rides** is a mobile ride-hailing application designed to make motorcycle and car transportation simple, fast, and accessible.
@@ -232,29 +234,6 @@ The real `.env` file should be included in `.gitignore` and should **never be co
 
 ---
 
-## ▶️ Running the Backend
-
-Navigate to the backend directory:
-
-```bash
-cd velo-backend
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the backend:
-
-```bash
-node server.js
-```
-
-When everything is working correctly, the server should connect to MongoDB and run on port `5000`.
-
----
 
 ## 📲 Running the Velo Mobile App
 
